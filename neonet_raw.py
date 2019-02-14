@@ -83,7 +83,7 @@ class BaseUplink:
         self.sendDataRaw(packet)
         #print("Sending",packet)
     def ping(self, timeout = 8000):
-        disableBlocking()
+        self.disableBlocking()
         timer = millis()+timeout
         self.sendPacket(CMD_PING,b'')
         while timer>millis():
@@ -118,7 +118,7 @@ class TcpSocketUplink(BaseUplink):
     def close(self):
         self.sok.close()
     def enableBlocking(self):
-        self.sok.setblocking(True)
+        pass#self.sok.setblocking(True)
     def disableBlocking(self):
         self.sok.setblocking(False)
 def TcpClientUplink(endpoint, port=16927):
@@ -127,20 +127,27 @@ def TcpClientUplink(endpoint, port=16927):
     return TcpSocketUplink(sok)
 def neonetServer(handler,port=16927):
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.bind((HOST, PORT))
+        s.bind(('localhost', port))
         s.listen()
         while True:
             conn, addr = s.accept()
             print(addr,"is connecting...")
-            with conn:
-                uplink = TcpSocketUplink(conn)
-                if uplink.ping()!=-1:
-                    _thread.start_new_thread(handler,(uplink,))
-                else:
-                    uplink.close()
+            uplink = TcpSocketUplink(conn)
+            if uplink.ping()!=-1:
+                _thread.start_new_thread(handler,(uplink,))
+            else:
+                uplink.close()
 def startNeonetServerThread(handler,port=16927):
     return _thread.start_new_thread(neonetServer,(handler,port))
 def test_connection(endpoint, port=1152):
     link = TcpClientUplink(endpoint,port)
     while True:
-        link.update()
+        link.ping(8000)
+        time.sleep(.005)
+def basic_handler(uplink):
+    while True:
+        if uplink.ping(8000)==-1:
+            break
+        time.sleep(.005)
+    print("Disconnected.")
+    uplink.close()
