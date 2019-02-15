@@ -46,7 +46,7 @@ class BaseUplink:
             elif cmd==CMD_RQRETX:
                 self.sendPacket(self.lstxcmd, self.lstxdata)
             elif cmd==CMD_TX:
-                self.queue.append(data)
+                self.queue.insert(0,data)
             elif cmd==CMD_PING_ACK:
                 self.pings_accepted+=1
             else:
@@ -63,13 +63,13 @@ class BaseUplink:
         self.update()
         if self.available()>0:
             self.disableBlocking()
-            return self.queue.remove(0)
+            return self.queue.pop()
         timer = millis() + timeout
         while millis()<timeout:
             self.update()
             if len(self.queue)>0:
                 self.disableBlocking()
-                return self.queue.remove(0)
+                return self.queue.pop()
             time.sleep(0.005)
         self.disableBlocking()
         return None
@@ -141,9 +141,19 @@ def startNeonetServerThread(handler,port=16927):
     return _thread.start_new_thread(neonetServer,(handler,port))
 def test_connection(endpoint, port=1152):
     link = TcpClientUplink(endpoint,port)
-    while True:
-        link.ping(8000)
-        time.sleep(.005)
+    if link.ping(8000)==-1:
+        return
+    print("Connection is LIVE")
+    try:
+        while True:
+            if(link.ping(8000)==-1):
+                break
+            time.sleep(.005)
+    except KeyboardInterrupt:
+        print("[keyboard interrupt]")
+    finally:
+        print("disconnecting...")
+        link.close()
 def basic_handler(uplink):
     while True:
         if uplink.ping(8000)==-1:
