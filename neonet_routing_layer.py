@@ -1,4 +1,4 @@
-from neonet_raw import *
+import neonet_raw as ntl
 from random import randint
 import _thread, time
 
@@ -39,13 +39,13 @@ def rand_addr(is_root = True):
     r = 1
     if not is_root:
         r = randint(0,65535)
-    r|=randint(0,0xFFFFFF)<<16
+    r|=randint(0,0x7FFFFF)<<16
     return r
 
 # None of the above addresses are 'absolute addresses'.  An absolute address always maps to the same device
 # on the network.
 
-debug_nrl = True
+debug_nrl = False#True
 is_in_debug = False
 def debug(*s):
     global is_in_debug
@@ -161,9 +161,9 @@ def test():
     _man = sman
     port = randint(81,8000)
     print("Using port "+str(port))
-    startNeonetServerThread(handler, port)
+    ntl.startNeonetServerThread(handler, port)
     time.sleep(.1)
-    cman.addUplink(TcpClientUplink("localhost",port))
+    cman.addUplink(ntl.TcpClientUplink("localhost",port))
     print("Waiting for routes to resolve...")
     time.sleep(.1)
     cman.sendPacket(s_adr, 1192, b'Hello World!')
