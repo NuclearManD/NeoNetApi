@@ -31,7 +31,7 @@ import _thread, time
 
 # common addresses
 
-ADR_BCAST    = 0x000000FF   # All devices across the entire accessible Neonet network.
+ADR_BCAST    = 0x0000FFFF   # All devices across the entire accessible Neonet network.
 ADR_LOCAL    = 0x00000000   # this system, loopback, like localhost.   May not always work!
                             # > It is recommended to use a loopback uplink instead.
 
@@ -39,7 +39,7 @@ def rand_addr(is_root = True):
     r = 1
     if not is_root:
         r = randint(0,65535)
-    r|=randint(0,0x7FFFFF)<<16
+    r|=randint(0,0x7FFFFFFFFFFF)<<16
     return r
 
 # None of the above addresses are 'absolute addresses'.  An absolute address always maps to the same device
