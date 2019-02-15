@@ -1,4 +1,4 @@
-import socket, time, _thread
+import socket, time, _thread, threading
 
 def millis():
     return int(time.time()*1000)
@@ -16,7 +16,7 @@ def nethash(cmd, data):
         a+=i<<16
         out=a^(out<<3)
     return out&0xFFFFFFFF
-
+all_uplinks = []
 class BaseUplink:
     def __init__(self):
         self.queue = []
@@ -24,6 +24,7 @@ class BaseUplink:
         self.lstxdata = b''
         self.lstxcmd = CMD_NOP
         self.pings_accepted = 0
+        all_uplinks.append(self)
     def restackPacket(self, data):
         self.queue.append(data)
     def update(self):
@@ -90,7 +91,7 @@ class BaseUplink:
             self.update()
             if self.pings_accepted>0:
                 self.pings_accepted-=1
-                return timer-millis()
+                return timeout-(timer-millis())
             time.sleep(0.001)
         return -1
     def sendDataRaw(self,data):
@@ -125,6 +126,26 @@ def TcpClientUplink(endpoint, port=16927):
     sok = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sok.connect((endpoint, port))
     return TcpSocketUplink(sok)
+class __PipeUplink__(BaseUplink):
+    def __init__(self, uplink = None):
+        super().__init__()
+        self.link = uplink
+    def fillBuffer(self):
+        pass
+    def sendDataRaw(self,data):
+        if self.link!=None:
+            self.link.inbuf+=data
+    def close(self):
+        self.link = None
+    def enableBlocking(self):
+        pass
+    def disableBlocking(self):
+        pass
+def buildPipeUplinkPair():
+    a = __PipeUplink__()
+    b = __PipeUplink__(a)
+    a.link = b
+    return a,b
 def neonetServer(handler,port=16927):
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.bind(('localhost', port))
@@ -138,6 +159,7 @@ def neonetServer(handler,port=16927):
             else:
                 uplink.close()
 def startNeonetServerThread(handler,port=16927):
+    _thread.start_new_thread(watching_thread, ())
     return _thread.start_new_thread(neonetServer,(handler,port))
 def test_connection(endpoint, port=1152):
     link = TcpClientUplink(endpoint,port)
@@ -161,3 +183,17 @@ def basic_handler(uplink):
         time.sleep(.005)
     print("Disconnected.")
     uplink.close()
+is_watching = False
+def watching_thread():
+    global is_watching
+    if is_watching:
+        return
+    is_watching = True
+    while threading.main_thread().isAlive():
+        time.sleep(.3)
+    for i in all_uplinks:
+        try:
+            i.close()
+        except:
+            pass
+    return
