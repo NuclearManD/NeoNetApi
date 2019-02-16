@@ -4,13 +4,13 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 import nuclaer.neonet.transport.Uplink;
 
 public class UplinkManager implements Runnable{
-	HashMap<String, Uplink> uplinks = new HashMap<String, Uplink>();
-	HashMap<Long, String> routes = new HashMap<Long, String>();
+	ConcurrentHashMap<String, Uplink> uplinks = new ConcurrentHashMap<String, Uplink>();
+	ConcurrentHashMap<Long, String> routes = new ConcurrentHashMap<Long, String>();
 	
 	ArrayList<NrlPacket> incoming = new ArrayList<NrlPacket>();
 	int lsid = 0;
@@ -112,6 +112,6 @@ public class UplinkManager implements Runnable{
 		return t;
 	}
 	public static long randAddress() {
-		return (((int)(0x7FFFFFFFFFFFL*Math.random()))<<16)|1;
+		return (((long)(0x7FFFFFFFFFFFL*Math.random()))<<16)|1;
 	}
 }
