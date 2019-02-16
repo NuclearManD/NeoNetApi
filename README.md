@@ -11,4 +11,5 @@ Connections NeoNet should be able to be (easily) built upon:
  * TCP
  * Serial Ports
  * Bluetooth?
+ * GPRS
  * More, I'm sure...
