@@ -68,6 +68,10 @@ class NrlConnectionManager:
         self.is_updating=False
     def addUplink(self, uplink, key=None):
         assert type(key)!=int and type(key)!=float
+
+        if uplink.ping(8000)==-1:
+            debug("Ping error!")
+            return
         
         uplink.sendData((self.address>>16).to_bytes(6,'little'))
         if key==None:
@@ -84,6 +88,7 @@ class NrlConnectionManager:
         self.is_updating=True
         for i in self.uplinks.keys():
             u = self.uplinks[i]
+            u.update()
             while u.available()>0:
                 data = u.getPacket()
                 if len(data)==6:
