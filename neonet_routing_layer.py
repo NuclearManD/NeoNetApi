@@ -77,6 +77,8 @@ class NrlConnectionManager:
         if key==None:
             key = self.index
             self.index+=1
+        while self.is_updating:
+            time.sleep(.0001)
         self.uplinks[key] = uplink
         debug("New Uplink: "+repr(key))
     def addRoute(self, address, key):
