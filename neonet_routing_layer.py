@@ -35,6 +35,8 @@ ADR_BCAST    = 0x0000FFFF   # All devices across the entire accessible Neonet ne
 ADR_LOCAL    = 0x00000000   # this system, loopback, like localhost.   May not always work!
                             # > It is recommended to use a loopback uplink instead.
 
+DEFAULT_AREA_CODE = 0xFFFFFFFFFFFF
+
 def rand_addr(is_root = True):
     r = 1
     if not is_root:
@@ -104,6 +106,8 @@ class NrlConnectionManager:
                         self.queue.insert(0,[sender,port,data[20:]])
                     else:
                         target = target>>16
+                        if not target in self.routing.keys():
+                            target = DEFAULT_AREA_CODE # default area code
                         if target in self.routing.keys(): # only transmit if we have a route for it
                             key = self.routing[target] # we have the route!
                             if key!=i and key in self.uplinks.keys():  # transmit to a different uplink or don't transmit at all
@@ -130,6 +134,8 @@ class NrlConnectionManager:
     def sendPacket(self, dest, port, data):
         ac = dest>>16 # ac stands for 'area code'
         debug("Area code is "+hex(ac))
+        if not ac in self.routing.keys():
+            ac = DEFAULT_AREA_CODE # default area code
         if ac in self.routing.keys(): # only transmit if we have a route for it
             key = self.routing[ac] # we have the route!
             if key in self.uplinks.keys():  # transmit to an uplink (if it exists)
