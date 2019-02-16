@@ -5,6 +5,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
+import nuclaer.neonet.transport.Uplink;
+
 public abstract class NeonetServer implements Runnable{
 	
 	private int port = 16927;
@@ -39,7 +41,7 @@ public abstract class NeonetServer implements Runnable{
 				Socket client = socket.accept();
 				debug("Incoming connection...");
 				Uplink uplink = new SocketUplink(client);
-				if(uplink.ping()>0) {
+				if(uplink.ping()!=-1) {
 					debug("New connection accepted from "+socket.getInetAddress().toString());
 					onNewConnection(uplink);
 				} else {

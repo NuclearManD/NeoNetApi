@@ -1,5 +1,7 @@
 package nuclaer.neonet.tcpuplink;
 
+import nuclaer.neonet.transport.Uplink;
+
 public class IdleServer extends NeonetServer {
 	public IdleServer() {
 		super(1152);

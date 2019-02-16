@@ -4,9 +4,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
+import java.util.Arrays;
+
+import nuclaer.neonet.transport.Uplink;
 
 public class SocketUplink extends Uplink {
 	private Socket socket;
@@ -140,9 +144,13 @@ public class SocketUplink extends Uplink {
 					if(hash!=nethash(cmd, buf)) {
 						System.out.println("Got bad packet, requesting retransmission...");
 						System.out.println("\texpected |   got");
-						System.out.println("length\t"+len+"\t | "+read);
+						//System.out.println("length\t"+len+"\t | "+read);
 						System.out.println("hash\t"+hash+"\t | "+nethash(cmd, buf));
 						System.out.println("Cmd was "+cmd);
+						for(byte i:buf) {
+							System.out.print(Integer.toHexString(((int)i)&0xFF)+", ");
+						}
+						System.out.println();
 						
 						sendPacket(CMD_RQRETX,new byte[0]);
 						continue;
@@ -180,6 +188,30 @@ public class SocketUplink extends Uplink {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public static Uplink connect(String endpoint) {
+		Socket socket;
+		try {
+			socket = new Socket(endpoint, 16927); // old port for Matrix was 7129.  This is the Neonet port.
+		} catch (UnknownHostException e) {
+			return null;
+		} catch (IOException e) {
+			return null;
+		}
+		return new SocketUplink(socket);
+	}
+	
+	public static Uplink connect(String endpoint, int port) {
+		Socket socket;
+		try {
+			socket = new Socket(endpoint, port); // old port for Matrix was 7129.  This is the Neonet port.
+		} catch (UnknownHostException e) {
+			return null;
+		} catch (IOException e) {
+			return null;
+		}
+		return new SocketUplink(socket);
 	}
 
 }
