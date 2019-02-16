@@ -120,8 +120,8 @@ class NrlConnectionManager:
         self.update()
         if self.available()>0:
             return self.queue.pop()
-        timer = millis() + timeout
-        while millis()<timeout:
+        timer = ntl.millis() + timeout
+        while ntl.millis()<timeout:
             self.update()
             if len(self.queue)>0:
                 return self.queue.pop()
