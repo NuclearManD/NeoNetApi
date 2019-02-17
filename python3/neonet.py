@@ -30,7 +30,7 @@ class NrlConnection:
             return False
         return man.sendPacket(self.adr,self.port, data)
     def recv(self,timeout = 8000):
-        if len(self.queue)>0:
+        if self.available()>0:
             return self.queue.pop()
         else:
             timer = ntl.millis()+timeout
@@ -46,6 +46,36 @@ class NrlConnection:
         while i<len(man.queue):
             if man.queue[i][0]==self.adr and man.queue[i][1]==self.port:
                 self.queue.insert(0,man.queue.pop(i)[2])
+            else:
+                i+=1
+        return len(self.queue)
+
+class NrlOpenPort:
+    def __init__(self, port):
+        self.port=port
+        self.queue = []
+    def send(self, adr, data):
+        if man==None:
+            return False
+        return man.sendPacket(adr,self.port, data)
+    def recv(self,timeout = 8000):
+        if self.available()>0:
+            return self.queue.pop()
+        else:
+            timer = ntl.millis()+timeout
+            while timer>ntl.millis():
+                if self.available()>0:
+                    return self.queue.pop()
+                time.sleep(0.0001)
+            return None
+    def available(self):
+        if man==None:
+            return len(self.queue)
+        i=0
+        while i<len(man.queue):
+            if man.queue[i][1]==self.port:
+                pk = man.queue.pop(i)
+                self.queue.insert(0,[pk[0],pk[2]])
             else:
                 i+=1
         return len(self.queue)
