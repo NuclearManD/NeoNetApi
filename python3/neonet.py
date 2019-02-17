@@ -12,14 +12,17 @@ DEFAULT_TCP_SERVERS = [('68.5.129.54',1155)]#,('192.168.0.1',16927)]
 
 man = None
 
+_is_setup = False
 def setup(adr=address, tcp_servers = DEFAULT_TCP_SERVERS, routing_table={nrl.DEFAULT_AREA_CODE:0}):
-    global address, man
+    global address, man, _is_setup
+    if _is_setup:
+        return "Already set up!"
     address = adr
     man = nrl.NrlConnectionManager(address,routing_table)
     man.startUpdateThread()
     for i in tcp_servers:
         man.addUplink(ntl.TcpClientUplink(i[0],i[1]))
-
+    _is_setup = True
 class NrlConnection:
     def __init__(self, adr, port):
         self.adr=adr
