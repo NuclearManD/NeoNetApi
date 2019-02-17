@@ -132,6 +132,11 @@ class NrlConnectionManager:
             time.sleep(0.005)
         return None
     def sendPacket(self, dest, port, data):
+        if dest == self.address:
+            # it's for me!
+            sender = int.from_bytes(data[8:16],'little')
+            port = int.from_bytes(data[16:20],'little')
+            self.queue.insert(0,[sender,port,data[20:]])
         ac = dest>>16 # ac stands for 'area code'
         debug("Area code is "+hex(ac))
         if not ac in self.routing.keys():
