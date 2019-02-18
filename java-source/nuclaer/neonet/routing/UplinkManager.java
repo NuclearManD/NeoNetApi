@@ -6,9 +6,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.ConcurrentHashMap;
 
+import nuclaer.neonet.tcpuplink.SocketUplink;
 import nuclaer.neonet.transport.Uplink;
 
 public class UplinkManager implements Runnable{
+	
+	public static long DEFAULT_AREA_CODE = 0x7FFFFFFFFFFFL;
+	
 	ConcurrentHashMap<String, Uplink> uplinks = new ConcurrentHashMap<String, Uplink>();
 	ConcurrentHashMap<Long, String> routes = new ConcurrentHashMap<Long, String>();
 	
@@ -17,6 +21,13 @@ public class UplinkManager implements Runnable{
 	long address;
 	public UplinkManager(long address) {
 		this.address = address;
+	}
+	public static UplinkManager easyConnect() {
+		UplinkManager man = new UplinkManager(randAddress());
+		man.startUpdateThread();
+		man.addUplink(SocketUplink.connect("68.5.129.54", 1155));
+		man.addRoute(DEFAULT_AREA_CODE, "0");
+		return man;
 	}
 	public void addUplink(Uplink uplink) {
 		addUplink(""+(lsid++),uplink);
@@ -47,6 +58,8 @@ public class UplinkManager implements Runnable{
 						incoming.add(packet);
 					}else {
 						long ac = packet.target>>16;
+						if(!routes.containsKey(ac))
+                            ac = DEFAULT_AREA_CODE; // default area code
 						if(routes.containsKey(ac)) { // only transmit if we have a route for it
 							String key = routes.get(ac); // we have the route!
 							if((key!=i)&&uplinks.containsKey(key)) {// transmit to a different uplink or don't transmit at all
@@ -59,7 +72,7 @@ public class UplinkManager implements Runnable{
 		}
 	}
 	private void debug(String s) {
-		System.out.println(s);
+		//System.out.println(s);
 	}
 	public int available() {
 		if(!updateThreadRunning)update();
@@ -86,6 +99,8 @@ public class UplinkManager implements Runnable{
 	 */
 	public boolean sendPacket(NrlPacket packet) {
 		long ac = packet.target>>16;
+		if(!routes.containsKey(ac))
+            ac = DEFAULT_AREA_CODE; // default area code
 		if(routes.containsKey(ac)) { // only transmit if we have a route for it
 			String key = routes.get(ac); // we have the route!
 			if(uplinks.containsKey(key)) {// transmit to a different uplink or don't transmit at all

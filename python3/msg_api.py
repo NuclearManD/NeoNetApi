@@ -97,9 +97,7 @@ class MessagingClient:
                     if self.list_time[i]>timing:
                         self.list_time.insert(i, timing)
                         self.list_text.insert(i, msg_text)
-                        continue
-                self.list_time.append(timing)
-                self.list_text.append(msg_text)
+                        break
     def send_msg(self, text):
         self.con.send(bytes([CMD_WRITE_MSG])+text.encode())
     def pop_msg(self):

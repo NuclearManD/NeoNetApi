@@ -35,7 +35,7 @@ ADR_BCAST    = 0x0000FFFF   # All devices across the entire accessible Neonet ne
 ADR_LOCAL    = 0x00000000   # this system, loopback, like localhost.   May not always work!
                             # > It is recommended to use a loopback uplink instead.
 
-DEFAULT_AREA_CODE = 0xFFFFFFFFFFFF
+DEFAULT_AREA_CODE = 0x7FFFFFFFFFFF
 
 def rand_addr(is_root = True):
     r = 1
