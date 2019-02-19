@@ -25,7 +25,9 @@ public class UplinkManager implements Runnable{
 	public static UplinkManager easyConnect() {
 		UplinkManager man = new UplinkManager(randAddress());
 		man.startUpdateThread();
-		man.addUplink(SocketUplink.connect("68.5.129.54", 1155));
+		Uplink uplink = SocketUplink.connect("68.5.129.54", 1155);
+		if(uplink==null)return null;
+		man.addUplink(uplink);
 		man.addRoute(DEFAULT_AREA_CODE, "0");
 		return man;
 	}

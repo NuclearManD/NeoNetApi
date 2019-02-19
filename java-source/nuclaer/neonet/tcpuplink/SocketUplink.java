@@ -194,8 +194,10 @@ public class SocketUplink extends Uplink {
 		try {
 			socket = new Socket(endpoint, 16927); // old port for Matrix was 7129.  This is the Neonet port.
 		} catch (UnknownHostException e) {
+			e.printStackTrace();
 			return null;
 		} catch (IOException e) {
+			e.printStackTrace();
 			return null;
 		}
 		return new SocketUplink(socket);
@@ -206,8 +208,10 @@ public class SocketUplink extends Uplink {
 		try {
 			socket = new Socket(endpoint, port); // old port for Matrix was 7129.  This is the Neonet port.
 		} catch (UnknownHostException e) {
+			e.printStackTrace();
 			return null;
 		} catch (IOException e) {
+			e.printStackTrace();
 			return null;
 		}
 		return new SocketUplink(socket);
