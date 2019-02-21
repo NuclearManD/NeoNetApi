@@ -20,6 +20,7 @@ Connections NeoNet should be able to be (easily) built upon:
  * Can operate over any stream
  * Can work with or without internet connection depending on configuration
  * No routers/NAT: all ports open and servers don't need port forwarding
+ * A server running over a TCP uplink can change it's IP and reconnect - and everything still works.
  * Simple, packet-based protocol for sending chunks of data
  * up to 2^64 addresses, and up to 2^32 ports (never will run out in forseeable future)
  * Should be fairly lightweight
@@ -29,3 +30,11 @@ Connections NeoNet should be able to be (easily) built upon:
  * Packet reception not garunteed if stream does not garuntee successful reception
  * Probably has certain inefficiencies that a different protocol could address
  * No concept of a connection until the user level, only data transfer
+
+## Languages/Platforms supported
+ * Java
+ * Python 3
+ * ESP32 Arduino (support currently very limited)
+
+## Protocols on NeoNet NRL/NTL
+ * Messaging
