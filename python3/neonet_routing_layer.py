@@ -64,7 +64,7 @@ class NrlConnectionManager:
     def __init__(self, address, routing_table={}):
         self.routing = routing_table
         self.uplinks = {}
-        self.index = 0
+        self.index = {}
         self.address = address
         self.queue = []
         self.is_updating=False
@@ -75,11 +75,15 @@ class NrlConnectionManager:
         
         if key in self.uplinks.keys():
             self.uplinks[key].close()
+            
+        ut = uplink.getType()
         
         uplink.sendData((self.address>>16).to_bytes(6,'little'))
         if key==None:
-            key = uplink.getType()+str(self.index)
-            self.index+=1
+            if not ut in self.index.keys():
+                self.index[ut]=0
+            key = ut+str(self.index[ut])
+            self.index[ut]+=1
         while self.is_updating:
             time.sleep(.0001)
         self.uplinks[key] = uplink
@@ -200,3 +204,31 @@ def test():
     else:
         print("Packet receieved back: "+repr(packetBack))
         return True
+def readRoutingTable(text):
+    text = text.replace('\r','\n').replace(';','#').replace('\t',' ')
+    lines = text.split('\n')
+    out = {}
+    for i in range(len(lines)):
+        line = lines[i].split('#',1)[0]
+        if line=='' or line.isspace():
+            continue
+        r_chunks = line.split(' ')
+        chunks = []
+        for i in r_chunks:
+            i = i.strip()
+            if i!='':
+                chunks.append(i)
+        if chunks[0]=='route':
+            if chunks[1]=='*':
+                adr = DEFAULT_AREA_CODE
+            elif chunks[1].endswith('****'):
+                adr = int(chunks[1][2:-4],16)
+            else:
+                print("Line "+str(i+1)+": Cannot process route "+str(chunks[1])+", but this may be due to a software limitation.")
+                continue
+            out[adr]=chunks[2]
+        else:
+            print("Line "+str(i+1)+": Command '"+chunks[0]+"' not found.")
+    return out
+        
+        
