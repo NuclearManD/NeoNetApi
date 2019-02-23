@@ -13,7 +13,7 @@ DEFAULT_TCP_SERVERS = [('68.5.129.54',1155)]#,('192.168.0.1',16927)]
 man = None
 
 _is_setup = False
-def setup(adr=address, tcp_servers = DEFAULT_TCP_SERVERS, routing_table={nrl.DEFAULT_AREA_CODE:0}):
+def setup(adr=address, tcp_servers = DEFAULT_TCP_SERVERS, routing_table={nrl.DEFAULT_AREA_CODE:"tcp0"}):
     global address, man, _is_setup
     if _is_setup:
         return "Already set up!"

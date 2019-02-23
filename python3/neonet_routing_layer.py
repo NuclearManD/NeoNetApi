@@ -35,7 +35,7 @@ ADR_BCAST    = 0x0000FFFF   # All devices across the entire accessible Neonet ne
 ADR_LOCAL    = 0x00000000   # this system, loopback, like localhost.   May not always work!
                             # > It is recommended to use a loopback uplink instead.
 
-DEFAULT_AREA_CODE = 0x7FFFFFFFFFFF
+DEFAULT_AREA_CODE = "*"
 
 def rand_addr(is_root = True):
     r = 1
@@ -69,15 +69,16 @@ class NrlConnectionManager:
         self.queue = []
         self.is_updating=False
     def addUplink(self, uplink, key=None):
-        assert type(key)!=int and type(key)!=float
-
         if uplink.ping(8000)==-1:
             debug("Ping error!")
             return
         
+        if key in self.uplinks.keys():
+            self.uplinks[key].close()
+        
         uplink.sendData((self.address>>16).to_bytes(6,'little'))
         if key==None:
-            key = self.index
+            key = uplink.getType()+str(self.index)
             self.index+=1
         while self.is_updating:
             time.sleep(.0001)
@@ -160,6 +161,14 @@ class NrlConnectionManager:
             time.sleep(.001)
     def startUpdateThread(self):
         return _thread.start_new_thread(self.updater,())
+    def exportRoutingTable(self):
+        out = ''
+        for i in self.routing.keys():
+            if type(i)==str:
+                out+="route "+i+' '+self.routing[i]+'\n'
+            else:
+                out+="route "+hex(i)+'**** '+self.routing[i]+'\n'
+        return out
 _man = None
 def handler(link):
     link.ping(1000)
