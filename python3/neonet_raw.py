@@ -145,6 +145,25 @@ class __PipeUplink__(BaseUplink):
         pass
     def getType(self):
         return "pipe"
+    def ping(self, t=0):
+        return 0
+class LoopbackUplink(BaseUplink):
+    def __init__(self):
+        super().__init__()
+    def fillBuffer(self):
+        pass
+    def sendDataRaw(self,data):
+        self.inbuf+=data
+    def close(self):
+        pass
+    def enableBlocking(self):
+        pass
+    def disableBlocking(self):
+        pass
+    def getType(self):
+        return "lo"
+    def ping(self, t=0):
+        return 0
 class NullUplink(BaseUplink):
     def __init__(self):
         super().__init__()
@@ -160,6 +179,8 @@ class NullUplink(BaseUplink):
         pass
     def getType(self):
         return "null"
+    def ping(self, t=0):
+        return 0
 def buildPipeUplinkPair():
     a = __PipeUplink__()
     b = __PipeUplink__(a)

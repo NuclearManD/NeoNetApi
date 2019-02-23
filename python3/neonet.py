@@ -22,6 +22,8 @@ def setup(adr=address, tcp_servers = DEFAULT_TCP_SERVERS, routing_table={nrl.DEF
     man.startUpdateThread()
     for i in tcp_servers:
         man.addUplink(ntl.TcpClientUplink(i[0],i[1]))
+    man.addUplink(ntl.LoopbackUplink())
+    man.addUplink(ntl.NullUplink())
     _is_setup = True
 class NrlConnection:
     def __init__(self, adr, port):
