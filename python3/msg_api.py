@@ -26,8 +26,8 @@ def __msgBcast(cons, msg_txt):
         __sendMsgPkt(i,msg)
     return msg
 def run_server(adr = net.address, port = MSG_PORT):
-    print("Starting messaging server at "+hex(adr)+":"+str(port))
     net.setup(adr)
+    print("Starting messaging server at "+hex(net.address)+":"+str(port))
     scon = net.NrlOpenPort(port)
     cons = []
 

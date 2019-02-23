@@ -2,6 +2,8 @@
 
 Routing files tell Uplink Managers how to route NRL packets.  They allow easy configuration of routes.
 
+File extension should be '.nnr' for "NeoNet Route file"
+
 ### Format
 
 Each line follows the format:

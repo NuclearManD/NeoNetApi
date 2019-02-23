@@ -1,0 +1,29 @@
+# this file is for reference purposes.
+
+# This line is in almost every routing file, it routes all outgoing traffic to the primary TCP uplink unless
+# otherwise specified.
+
+route * tcp0
+
+# here is how to stop certain outgoing traffic (ex: all addresses with area code 0xC58229
+
+route 0xC58229**** null0
+
+# this will route outgoing packets sent to the specified area code back to self.
+# Note:  not recommended because the packets will 'clog' the loopback uplink by sending all traffic
+#        back to itself, so all packets stay in lo0 uplink forever.
+
+route 0x9263CF**** lo0
+
+
+
+# alternatively, we can route all outgoing traffic to null0 except for a few whitelisted addresses.
+# for the messaging server this makes anyone able to log in and send messages, but they will not get any messages.
+#  I'm leaving it commented out.
+
+;route * null0
+;route WHITELISTED1 tcp0
+;route WHITELISTED2 tcp0
+;route WHITELISTED3 tcp0
+
+
