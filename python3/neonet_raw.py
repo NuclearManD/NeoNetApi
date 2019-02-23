@@ -104,6 +104,8 @@ class BaseUplink:
         pass
     def disableBlocking(self):
         pass
+    def getType(self):
+        return self.__class__.__name__[:3].lower()
 class TcpSocketUplink(BaseUplink):
     def __init__(self, sok):
         super().__init__()
@@ -141,6 +143,23 @@ class __PipeUplink__(BaseUplink):
         pass
     def disableBlocking(self):
         pass
+    def getType(self):
+        return "pipe"
+class NullUplink(BaseUplink):
+    def __init__(self):
+        super().__init__()
+    def fillBuffer(self):
+        pass
+    def sendDataRaw(self,data):
+        pass
+    def close(self):
+        pass
+    def enableBlocking(self):
+        pass
+    def disableBlocking(self):
+        pass
+    def getType(self):
+        return "null"
 def buildPipeUplinkPair():
     a = __PipeUplink__()
     b = __PipeUplink__(a)
