@@ -38,3 +38,10 @@ Connections NeoNet should be able to be (easily) built upon:
 
 ## Protocols on NeoNet NRL/NTL
  * Messaging
+ * Some otehr random obscure other protocols I made...
+ * ... including one for GPS trackers
+## Communicated successfully on...
+ * Over TCP sockets
+ * Over LoRa
+ * On SIM900 GPRS shield with Hologram SIM card
+ * Over Serial
