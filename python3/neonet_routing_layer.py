@@ -93,7 +93,7 @@ class NrlConnectionManager:
         self.routing[address]=key
     def update(self):
         while self.is_updating:
-            time.sleep(0.000001)
+            time.sleep(0.0001)
         self.is_updating=True
         for i in self.uplinks.keys():
             u = self.uplinks[i]
@@ -108,6 +108,7 @@ class NrlConnectionManager:
                         # it's for me!
                         sender = int.from_bytes(data[8:16],'little')
                         port = int.from_bytes(data[16:20],'little')
+                        #print("recv")
                         self.queue.insert(0,[sender,port,data[20:]])
                     else:
                         target = target>>16

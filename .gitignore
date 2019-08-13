@@ -38,3 +38,8 @@ pip-delete-this-directory.txt
 
 # pyenv
 .python-version
+
+
+logs/*
+*__pycache__*
+*cfg.txt*
