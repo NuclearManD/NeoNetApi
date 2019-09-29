@@ -1,3 +1,9 @@
+# NeoNet
+
+Neonet is a network to solve the problems created by NAT, and to make peer-to-peer networks easier.
+
+Currently it is built on top of the internet and is centralized, but it is designed to be scalable, and to provide a better network than the existing Internet.
+
 # NeoNetApi
 NeoNet API in Python, Java, and Arduino
 
